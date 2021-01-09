@@ -23,6 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  splashscreen: ^1.3.5
+  shared_preferences: ^0.5.12+4
+  image_picker: ^0.6.7+21
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -32,6 +35,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.8.0"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -49,6 +58,7 @@ flutter:
     - assets/header2.jpg
     - assets/pic1.jpg
     - assets/pic2.jpg
+    - assets/logo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

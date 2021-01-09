@@ -33,7 +33,7 @@ void initState(){
           preferredSize: Size(0.0, 40.0),
           child: TabBar(
             tabs: [
-              Text('Sing in'), Text('Sign up')
+              Text('Sign in'), Text('Sign up')
             ],
             controller: tabController,
             labelColor: Colors.black,

@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -8,6 +11,9 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+
+File pickedImage;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,13 +39,20 @@ class _ProfileState extends State<Profile> {
                     margin: EdgeInsets.all(15.0),
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage('https://pbs.twimg.com/profile_images/1270783622434435072/nUAehm4__400x400.jpg'),
+                        image: pickedImage == null ? NetworkImage('https://pbs.twimg.com/profile_images/1270783622434435072/nUAehm4__400x400.jpg') : FileImage(pickedImage),
                         fit: BoxFit.fill,
                       ),
                       shape: BoxShape.circle
                     ),
                     alignment: Alignment.center,
-                    child: Icon(Icons.add_a_photo, color: Colors.black, size: 20.0),
+                    child: IconButton(
+                      icon: Icon(Icons.add_a_photo),
+                      color: Colors.black,
+                      iconSize: 25.0,
+                      onPressed: () {
+                        pickImage(ImageSource.camera);
+                      }
+                    ),
                   ),
                   Text(
                       'Bassel Allam',
@@ -48,16 +61,20 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
             ),
-            item('baseljahen@gmailcom', Icons.email),
-            item('*****', Icons.lock),
-            item('20/12/1990', Icons.calendar_today),
-            item('English', Icons.language),
+            item('baseljahen@gmailcom', Icons.email, () {}),
+            item('*****', Icons.lock, () {}),
+            item('20/12/1990', Icons.calendar_today, () {}),
+            item('English', Icons.language, () {}),
+            item('Sign out', Icons.exit_to_app, () async {
+              SharedPreferences _user = await SharedPreferences.getInstance();
+              _user.clear();
+            })
           ],
         ),
       ),
     );
   }
-  item(String title, IconData icon){
+  item(String title, IconData icon, Function onTap){
     return Container(
       margin: EdgeInsets.all(15.0),
       decoration: BoxDecoration(
@@ -71,7 +88,15 @@ class _ProfileState extends State<Profile> {
             style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
           ),
         trailing: Icon(Icons.edit, color: Colors.grey, size: 20.0),
+        onTap: onTap
       ),
     );
+  }
+  pickImage(ImageSource source) async {
+
+    File _pickedImage = await ImagePicker.pickImage(source: source);
+    setState(() {
+      pickedImage = _pickedImage;
+    });
   }
 }

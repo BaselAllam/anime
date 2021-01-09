@@ -1,4 +1,4 @@
-import 'package:anime/screens/sign.dart';
+import 'package:anime/screens/splashscreen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Sign(),
+      home: SplashScreens(),
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           color: Colors.transparent,

@@ -1,4 +1,6 @@
+import 'package:anime/screens/bottomnavbar/bottomnavbar.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -39,7 +41,11 @@ TextEditingController passwordController = TextEditingController();
                 style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
             color: Colors.black,
-            onPressed: () {}
+            onPressed: () async {
+              SharedPreferences _user = await SharedPreferences.getInstance();
+              _user.setString('email', emailController.text);
+              return Navigator.push(context, MaterialPageRoute(builder: (_) {return BottomNavBar();}));
+            }
           ),
         ],
       ),

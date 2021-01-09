@@ -29,6 +29,8 @@ String gender = 'Select Gender';
 
 bool check = false;
 
+DateTime pickedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -100,6 +102,27 @@ bool check = false;
                 }
               );
             }
+            ),
+            item('Birth Date',
+              pickedDate.toString().substring(0, 11),
+              Icon(Icons.date_range, color: Colors.grey, size: 20.0),
+              () async {
+                DateTime _pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1970),
+                  lastDate: DateTime.now(),
+                );
+                if(_pickedDate == null){
+                  setState(() {
+                    pickedDate = DateTime.now();
+                  });
+                }else{
+                  setState(() {
+                    pickedDate = _pickedDate;
+                  });
+                }
+              }
             ),
             FlatButton(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
