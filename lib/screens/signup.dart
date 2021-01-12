@@ -1,5 +1,8 @@
 import 'package:anime/screens/bottomnavbar/bottomnavbar.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 
@@ -17,11 +20,13 @@ TextEditingController emailController = TextEditingController();
 TextEditingController userNameController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 TextEditingController confirmPasswordController = TextEditingController();
+TextEditingController addressController = TextEditingController();
 
 GlobalKey<FormState> emailKey = GlobalKey<FormState>();
 GlobalKey<FormState> userNameKey = GlobalKey<FormState>();
 GlobalKey<FormState> passwordKey = GlobalKey<FormState>();
 GlobalKey<FormState> confirmPasswordKey = GlobalKey<FormState>();
+GlobalKey<FormState> addressKey = GlobalKey<FormState>();
 
 final _formKey = GlobalKey<FormState>();
 
@@ -30,6 +35,20 @@ String gender = 'Select Gender';
 bool check = false;
 
 DateTime pickedDate = DateTime.now();
+
+Position position;
+
+Location location;
+
+bool _isMapLoading = true;
+
+List<Marker> markers = [];
+
+@override
+void initState(){
+  locationMethod();
+  super.initState();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +62,12 @@ DateTime pickedDate = DateTime.now();
             field(Icons.email, 'email address', TextInputType.emailAddress, emailController, false, null, emailKey),
             field(Icons.lock, 'password', TextInputType.text, passwordController, secure, lockButton(), passwordKey),
             field(Icons.lock, 'confirm password', TextInputType.text, confirmPasswordController, secure, lockButton(), confirmPasswordKey),
+            field(Icons.location_on, 'address', TextInputType.text, addressController, false, null, addressKey),
+            Container(
+              height: MediaQuery.of(context).size.height/2.5,
+              margin: EdgeInsets.all(10.0),
+              child: _isMapLoading == true ? Center(child: CircularProgressIndicator()) : buildMap()
+            ),
             item('Gender', gender,
             PopupMenuButton(
                 icon: Icon(Icons.arrow_circle_down, color: Colors.grey, size: 20.0),
@@ -237,8 +262,69 @@ DateTime pickedDate = DateTime.now();
         ),
         keyboardType: type,
         obscureText: obsecure,
-        controller: controller
+        controller: controller,
+        onFieldSubmitted: (value){
+          if(label == 'address'){
+            return searchLocation(addressController.text);
+          }else{
+            return null;
+          }
+        }
       ),
+    );
+  }
+  locationMethod() async {
+
+    setState(() {
+      _isMapLoading = true;
+    });
+
+    bool _enabled = await  Geolocator.isLocationServiceEnabled();
+    if(_enabled == false){
+      setState(() {
+        _isMapLoading = false;
+      });
+      return false;
+    }else{
+      Position _currentPosition = await Geolocator.getCurrentPosition();
+      Marker _newMarker = Marker(
+        position: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+        markerId: MarkerId('2')
+      );
+      setState(() {
+        position = _currentPosition;
+        markers.add(_newMarker);
+        _isMapLoading = false;
+      });
+    }
+  }
+  searchLocation(String searchWord) async {
+    
+    setState(() {
+      _isMapLoading = true;
+    });
+
+    List<Location> _search = await locationFromAddress(searchWord);
+    Marker _newMarker = Marker(
+      position: LatLng(_search[0].latitude, _search[0].longitude),
+      markerId: MarkerId('1')
+    );
+    setState(() {
+      location = _search[0];
+      markers.add(_newMarker);
+      _isMapLoading = false;
+    });
+  }
+  buildMap() {
+    return GoogleMap(
+      mapType: MapType.normal,
+      myLocationButtonEnabled: true,
+      myLocationEnabled: true,
+      initialCameraPosition: CameraPosition(
+        target: addressController.text.isEmpty ? LatLng(position.latitude, position.longitude) : LatLng(location.latitude, location.longitude),
+        zoom: 12
+      ),
+      markers: Set.from(markers),
     );
   }
 }
