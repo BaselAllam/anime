@@ -5,8 +5,13 @@ import 'package:flutter/material.dart';
 class Item extends StatefulWidget {
 
 final String image;
+final String movieName;
+final double movieRate;
+final int movieViews;
+final String publishedDate;
+final double movieDuration;
 
-Item(this.image);
+Item({this.image, this.movieName, this.movieRate, this.movieViews, this.publishedDate, this.movieDuration});
 
   @override
   _ItemState createState() => _ItemState();
@@ -31,7 +36,7 @@ bool pressed = false;
             height: 220.0,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(widget.image),
+                image: NetworkImage(widget.image),
                 fit: BoxFit.fill
               ),
               borderRadius: BorderRadius.circular(20.0),
@@ -50,11 +55,11 @@ bool pressed = false;
           ),
           ListTile(
             title: Text(
-              'Movie Name',
+              '${widget.movieName}',
               style: TextStyle(color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              '2020 - Comedy - 2:00H\n4.8 - 20 Reviews',
+              '${widget.publishedDate} - Comedy - ${widget.movieDuration}H\n${widget.movieRate} - ${widget.movieViews} Views',
               style: TextStyle(color: Colors.grey, fontSize: 15.0, fontWeight: FontWeight.bold),
             ),
           ),

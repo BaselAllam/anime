@@ -29,7 +29,7 @@ List itemImage = [
           scrollDirection: Axis.vertical,
           itemCount: itemImage.length,
           itemBuilder: (context, index){
-            return Item(itemImage[index]);
+            //return Item(itemImage[index]);
           },
         ),
       ),

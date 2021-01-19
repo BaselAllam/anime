@@ -1,15 +1,29 @@
-import 'package:anime/screens/bottomnavbar/searchresult.dart';
+import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/screens/searchresult.dart';
 import 'package:anime/widgets/item.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 
 
 class HomePage extends StatefulWidget {
+
+final MovieController movie;
+
+HomePage(this.movie);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
+@override
+void initState() {
+  widget.movie.getMovie();
+  super.initState();
+}
+
 
 List headerImage = [
   'assets/header.jpg', 'assets/header2.jpg'
@@ -32,7 +46,7 @@ List itemImage = [
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              return Navigator.push(context, MaterialPageRoute(builder: (_) {return SearchResult('Result');}));
+              return Navigator.push(context, MaterialPageRoute(builder: (_) {return SearchResult('Result', widget.movie);}));
             },
           ),
         ],
@@ -84,18 +98,35 @@ List itemImage = [
         style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
       ),
       onTap: () {
-        return Navigator.push(context, MaterialPageRoute(builder: (_) {return SearchResult(title);}));
+        return Navigator.push(context, MaterialPageRoute(builder: (_) {return SearchResult(title, widget.movie);}));
       },
       trailing: Icon(Icons.navigate_next, color: Colors.black, size: 20.0),
     );
   }
   scrollSection() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: itemImage.length,
-      itemBuilder: (context, index){
-        return Item(itemImage[index]);
-      },
+    return ScopedModelDescendant(
+      builder: (context, child, MovieController movie){
+        if(movie.isGetMovieLoding == true){
+          return Center(child: CircularProgressIndicator());
+        }else if(movie.allMovies.isEmpty){
+          return Center(child: Text('no movie found', style: TextStyle(fontSize: 30.0)));
+        }else{
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: movie.allMovies.length,
+            itemBuilder: (context, index){
+              return Item(
+                image : movie.allMovies[index].movieImage,
+                movieDuration: movie.allMovies[index].movieDuration,
+                movieName: movie.allMovies[index].movieName,
+                movieRate: movie.allMovies[index].movieRate,
+                movieViews: movie.allMovies[index].movieViews,
+                publishedDate: movie.allMovies[index].publishedDate,
+              );
+            },
+          );
+        }
+      }
     );
   }
 }

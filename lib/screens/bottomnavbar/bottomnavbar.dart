@@ -1,7 +1,10 @@
+import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/screens/bottomnavbar/addmovie.dart';
 import 'package:anime/screens/bottomnavbar/homepage.dart';
 import 'package:anime/screens/bottomnavbar/profile.dart';
 import 'package:anime/screens/bottomnavbar/wishlist.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 
 class BottomNavBar extends StatefulWidget {
@@ -10,10 +13,6 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-
-List screens = [
-  HomePage(), Wishlist(), Profile(),
-];
 
 int current = 0;
 
@@ -30,6 +29,10 @@ int current = 0;
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Wishlist'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Add Movie'
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -50,7 +53,22 @@ int current = 0;
           });
         },
       ),
-      body: screens[current],
+      body: ScopedModelDescendant(
+        builder: (context, child, MovieController movie){
+          return navigate(movie);
+        }
+      ),
     );
+  }
+  navigate(MovieController movie) {
+    if(current == 0){
+      return HomePage(movie);
+    }else if(current == 1){
+      return Wishlist();
+    }else if(current == 2){
+      return AddMovie();
+    }else{
+      return Profile();
+    }
   }
 }
