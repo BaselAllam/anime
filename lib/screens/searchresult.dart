@@ -1,4 +1,4 @@
-import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/models/mainmodel.dart';
 import 'package:anime/widgets/item.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -7,7 +7,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 class SearchResult extends StatefulWidget {
 
-final MovieController movie;
+final MainModel movie;
 final String classTitle;
 
 SearchResult(this.classTitle, this.movie);
@@ -44,7 +44,7 @@ void initState() {
       body: Container(
         margin: EdgeInsets.all(10.0),
         child: ScopedModelDescendant(
-          builder: (context, child, MovieController movie){
+          builder: (context, child, MainModel movie){
             if(movie.isGetMovieLoding == true){
               return Center(child: CircularProgressIndicator());
             }else if(movie.allMovies.isEmpty){

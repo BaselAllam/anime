@@ -1,4 +1,4 @@
-import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/models/mainmodel.dart';
 import 'package:anime/screens/bottomnavbar/addmovie.dart';
 import 'package:anime/screens/bottomnavbar/homepage.dart';
 import 'package:anime/screens/bottomnavbar/profile.dart';
@@ -54,13 +54,13 @@ int current = 0;
         },
       ),
       body: ScopedModelDescendant(
-        builder: (context, child, MovieController movie){
+        builder: (context, child, MainModel movie){
           return navigate(movie);
         }
       ),
     );
   }
-  navigate(MovieController movie) {
+  navigate(MainModel movie) {
     if(current == 0){
       return HomePage(movie);
     }else if(current == 1){

@@ -1,4 +1,4 @@
-import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/models/mainmodel.dart';
 import 'package:anime/screens/searchresult.dart';
 import 'package:anime/widgets/item.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 class HomePage extends StatefulWidget {
 
-final MovieController movie;
+final MainModel movie;
 
 HomePage(this.movie);
 
@@ -56,6 +56,31 @@ List itemImage = [
         child: ListView(
           scrollDirection: Axis.vertical,
           children: [
+            ScopedModelDescendant(
+              builder: (context, child, MainModel category){
+                return Container(
+                  height: 100.0,
+                  margin: EdgeInsets.all(10.0),
+                  child: category.isGetCategoryLoding == true ? Center(child: CircularProgressIndicator()) : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        '${category.allCategories[0].categoryName}',
+                        style: TextStyle(color: Colors.teal, fontSize: 25.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${category.allCategories[1].categoryName}',
+                        style: TextStyle(color: Colors.teal, fontSize: 25.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${category.allCategories[2].categoryName}',
+                        style: TextStyle(color: Colors.teal, fontSize: 25.0, fontWeight: FontWeight.bold),
+                      ),
+                    ]
+                  ),
+                );
+              }
+            ),
             Container(
               height: MediaQuery.of(context).size.height/3,
               child: ListView.builder(
@@ -105,7 +130,7 @@ List itemImage = [
   }
   scrollSection() {
     return ScopedModelDescendant(
-      builder: (context, child, MovieController movie){
+      builder: (context, child, MainModel movie){
         if(movie.isGetMovieLoding == true){
           return Center(child: CircularProgressIndicator());
         }else if(movie.allMovies.isEmpty){
@@ -122,6 +147,7 @@ List itemImage = [
                 movieRate: movie.allMovies[index].movieRate,
                 movieViews: movie.allMovies[index].movieViews,
                 publishedDate: movie.allMovies[index].publishedDate,
+                id: movie.allMovies[index].movieId
               );
             },
           );
