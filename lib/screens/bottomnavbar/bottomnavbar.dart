@@ -53,7 +53,7 @@ int current = 0;
           });
         },
       ),
-      body: ScopedModelDescendant(
+      body: ScopedModelDescendant<MainModel>(
         builder: (context, child, MainModel movie){
           return navigate(movie);
         }
@@ -66,7 +66,7 @@ int current = 0;
     }else if(current == 1){
       return Wishlist();
     }else if(current == 2){
-      return AddMovie();
+      return AddMovie(movie, 'add');
     }else{
       return Profile();
     }

@@ -1,4 +1,5 @@
-import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/models/mainmodel.dart';
+import 'package:anime/screens/bottomnavbar/addmovie.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -27,8 +28,12 @@ bool pressed = false;
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant(
-      builder: (context, child, MovieController movie){
+      builder: (context, child, MainModel movie){
         return InkWell(
+          onDoubleTap: () {
+            movie.selectMovie(widget.id);
+            Navigator.push(context, MaterialPageRoute(builder: (_) {return AddMovie(movie, 'edit');}));
+          },
           onLongPress: () {
             movie.selectMovie(widget.id);
             movie.deleteMovie(widget.id);

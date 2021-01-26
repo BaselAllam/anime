@@ -8,7 +8,7 @@ import 'package:scoped_model/scoped_model.dart';
 mixin CategoryController on Model{
 
 
-  bool _isGetCategoryLoading = true;
+  bool _isGetCategoryLoading;
   bool get isGetCategoryLoding => _isGetCategoryLoading;
 
   List<CategoryModel> _allCategories = [];

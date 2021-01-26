@@ -1,5 +1,5 @@
 import 'package:anime/models/movie/moviemodel.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,19 +10,29 @@ mixin MovieController on Model{
 
   final String _url = 'https://anime-b2dfd-default-rtdb.firebaseio.com/movies.json';
 
-  bool _isGetMovieLoading = true;
+  bool _isGetMovieLoading;
   bool get isGetMovieLoding => _isGetMovieLoading;
 
-  bool _isAddMovieLoading = true;
+  bool _isAddMovieLoading;
   bool get isAddMovieLoding => _isAddMovieLoading;
 
-  bool _isDeleteMovieLoading = true;
+  bool _isEditMovieLoading;
+  bool get isEditMovieLoding => _isEditMovieLoading;
+
+  bool _isDeleteMovieLoading;
   bool get isDeleteMovieLoding => _isDeleteMovieLoading;
 
   List<MovieModel> _allMovies = [];
   List<MovieModel> get allMovies => _allMovies;
 
   String _selectedMovieId;
+
+
+  MovieModel get selectedMovie{
+    return _allMovies.firstWhere((MovieModel movie) {
+      return movie.movieId == _selectedMovieId;
+    });
+  }
 
 
   selectMovie(String id) {
@@ -132,6 +142,43 @@ mixin MovieController on Model{
       return true;
     }else{
       _isDeleteMovieLoading = false;
+      notifyListeners();
+      return false;
+    }
+
+  }
+
+
+  Future<bool> updateMovie(String movieName, double movieDuration, String id) async {
+
+
+    _isEditMovieLoading = true;
+    notifyListeners();
+
+
+    Map<String, dynamic> _data = {
+      'movieName' : movieName,
+      'movieDuration' : movieDuration,
+      'movieRate' : 1.5,
+      'movieViews' : 1,
+      'publishedDate' : DateTime.now().toString().substring(0,10),
+      "movieImage" : 'https://firebasestorage.googleapis.com/v0/b/anime-b2dfd.appspot.com/o/images%2Fpic1.jpg?alt=media&token=8d94355d-434a-4bca-9cf5-ccffd3511b59'
+    };
+
+    try {
+      http.Response _response = await http.put('https://anime-b2dfd-default-rtdb.firebaseio.com/movies/$id.json', body: json.encode(_data));
+      if(_response.statusCode == 200){
+        _isEditMovieLoading = false;
+        notifyListeners();
+        return true;
+      }else{
+        _isEditMovieLoading = false;
+        notifyListeners();
+        return false;
+      }
+      //Firestore.instance.collection('movie').add(_data);
+    } catch (e) {
+      _isEditMovieLoading = false;
       notifyListeners();
       return false;
     }

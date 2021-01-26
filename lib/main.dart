@@ -11,7 +11,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel(
+    return ScopedModel<MainModel>(
       model: MainModel(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

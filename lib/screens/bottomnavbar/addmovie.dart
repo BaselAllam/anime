@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:anime/models/movie/moviecontroller.dart';
+import 'package:anime/models/mainmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -9,19 +8,23 @@ import 'package:scoped_model/scoped_model.dart';
 
 
 class AddMovie extends StatefulWidget {
+
+final MainModel model;
+final String editOrAdd;
+
+AddMovie(this.model, this.editOrAdd);
+
   @override
   _AddMovieState createState() => _AddMovieState();
 }
 
 class _AddMovieState extends State<AddMovie> {
 
-TextEditingController nameController = TextEditingController();
-TextEditingController priceController = TextEditingController();
-TextEditingController descriptionController = TextEditingController();
+TextEditingController movieNameController = TextEditingController();
+TextEditingController movieDurationController = TextEditingController();
 
-final GlobalKey<FormFieldState<String>> nameKey = GlobalKey<FormFieldState<String>>();
-final GlobalKey<FormFieldState<String>> priceKey = GlobalKey<FormFieldState<String>>();
-final GlobalKey<FormFieldState<String>> descriptionKey = GlobalKey<FormFieldState<String>>();
+final GlobalKey<FormFieldState<String>> movieNameKey = GlobalKey<FormFieldState<String>>();
+final GlobalKey<FormFieldState<String>> movieDurationKey = GlobalKey<FormFieldState<String>>();
 
 final _formKey = GlobalKey<FormState>();
 
@@ -40,7 +43,7 @@ File pickedImage;
       ),
       backgroundColor: Colors.white,
       body: ScopedModelDescendant(
-        builder: (context, child, MovieController movie){
+        builder: (context, child, MainModel movie){
           return Container(
             margin: EdgeInsets.all(10.0),
             child: Form(
@@ -106,29 +109,50 @@ File pickedImage;
                       },
                     ),
                   ),
-                  field('Movie Name', TextInputType.text, nameController, nameKey),
-                  field('Movie Duration', TextInputType.number, priceController, priceKey),
+                  field(
+                    widget.editOrAdd == 'add' ? 'Movie Name' : movie.selectedMovie.movieName,
+                    TextInputType.text, movieNameController, movieNameKey),
+                  field(
+                    widget.editOrAdd == 'add' ? 'Movie Duration' : movie.selectedMovie.movieDuration.toString(),
+                    TextInputType.number, movieDurationController, movieDurationKey),
                   Padding(
                     padding: EdgeInsets.all(20.0),
-                    child: FlatButton(
-                      child: Text(
-                        'add',
-                        style: TextStyle(color: Colors.white, fontSize: 25.0, fontWeight: FontWeight.bold),
-                      ),
-                      color: Colors.black,
-                      padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                      onPressed: () async {
-                        if(!_formKey.currentState.validate()){
-                          return Scaffold.of(context).showSnackBar(snack('someFieldsRequired'));
-                        }else{
-                          bool _valid = await movie.addMovie(nameController.text, double.parse(priceController.text));
-                          if(_valid == true){
-                            return Scaffold.of(context).showSnackBar(snack('movie added'));
-                          }else{
-                            return Scaffold.of(context).showSnackBar(snack('some thing went wrong'));
+                    child: Builder(
+                      builder: (BuildContext context){
+                        return FlatButton(
+                          child: Text(
+                            widget.editOrAdd == 'add' ? 'add' : 'edit',
+                            style: TextStyle(color: Colors.white, fontSize: 25.0, fontWeight: FontWeight.bold),
+                          ),
+                          color: Colors.black,
+                          padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                          onPressed: () async {
+                            if(widget.editOrAdd == 'add'){
+                                if(!_formKey.currentState.validate()){
+                                  return Scaffold.of(context).showSnackBar(snack('someFieldsRequired'));
+                                }else{
+                                  bool _valid = await movie.addMovie(movieNameController.text, double.parse(movieDurationController.text));
+                                  if(_valid == true){
+                                    return Scaffold.of(context).showSnackBar(snack('movie added'));
+                                  }else{
+                                    return Scaffold.of(context).showSnackBar(snack('some thing went wrong'));
+                                  }
+                                }
+                              }else{
+                                bool _valid = await movie.updateMovie(
+                                  movieNameController.text.isEmpty ? movie.selectedMovie.movieName : movieNameController.text,
+                                  movieDurationController.text.isEmpty ? movie.selectedMovie.movieDuration : double.parse(movieDurationController.text),
+                                  movie.selectedMovie.movieId
+                                );
+                                if(_valid == true){
+                                  return Scaffold.of(context).showSnackBar(snack('movie updated')); 
+                                }else{
+                                  return Scaffold.of(context).showSnackBar(snack('some thing went wrong'));
+                                }
+                              }
                           }
-                        }
+                        );
                       }
                     ),
                   ),
@@ -160,7 +184,7 @@ File pickedImage;
             borderRadius: BorderRadius.circular(20.0),
             borderSide: BorderSide(color: Colors.red, width: 1.0),
           ),
-          labelText: 'label',
+          labelText: label,
           labelStyle: TextStyle(color: Colors.grey, fontSize: 15.0, fontWeight: FontWeight.normal),
         ),
         keyboardType: inputType,

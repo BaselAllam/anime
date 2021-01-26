@@ -1,4 +1,5 @@
 import 'package:anime/models/mainmodel.dart';
+import 'package:anime/responsive/responsivehomepage.dart';
 import 'package:anime/widgets/item.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -27,6 +28,7 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
+    var data = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -54,7 +56,7 @@ void initState() {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 5,
-                  childAspectRatio: 0.55
+                  childAspectRatio: responsiveResultGrid(data)
                 ),
                 scrollDirection: Axis.vertical,
                 itemCount: movie.allMovies.length,
